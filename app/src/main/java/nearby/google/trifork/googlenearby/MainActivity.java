@@ -12,7 +12,9 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.nearby.Nearby;
+import com.google.android.gms.nearby.messages.EddystoneUid;
 import com.google.android.gms.nearby.messages.Message;
+import com.google.android.gms.nearby.messages.MessageFilter;
 import com.google.android.gms.nearby.messages.MessageListener;
 import com.google.android.gms.nearby.messages.Strategy;
 import com.google.android.gms.nearby.messages.SubscribeOptions;
@@ -57,8 +59,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Strategy strategy = new Strategy.Builder()
                 .build();
 
+        MessageFilter messageFilter = new MessageFilter.Builder()
+                .includeAllMyTypes()
+                .includeEddystoneUids("f7826da6bc5b71e0893e", null /* any instance */)
+                .build();
+
         options = new SubscribeOptions.Builder()
                 .setStrategy(strategy)
+                .setFilter(messageFilter)
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
