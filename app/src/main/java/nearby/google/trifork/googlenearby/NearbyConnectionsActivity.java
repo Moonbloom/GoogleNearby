@@ -86,8 +86,11 @@ public class NearbyConnectionsActivity extends AppCompatActivity implements Goog
     @SuppressLint("HardwareIds")
     @Override
     public void onConnected(Bundle connectionHint) {
-        startAdvertising();
-        startDiscovery();
+        if (Utils.getNameFromDeviceId(this).equals(Utils.KHL)) {
+            startDiscovery();
+        } else {
+            startAdvertising();
+        }
     }
 
     @Override
@@ -162,10 +165,11 @@ public class NearbyConnectionsActivity extends AppCompatActivity implements Goog
     private void startDiscovery() {
         if (!isConnectedToNetwork()) {
             Toast.makeText(this, "NO INTERNET", Toast.LENGTH_LONG).show();
+            return;
         }
 
         // Set an appropriate timeout length in milliseconds
-        long DISCOVER_TIMEOUT = 1000L;
+        long DISCOVER_TIMEOUT = 0L; // 0 = infinite
 
         // Discover nearby apps that are advertising with the required service ID.
         Nearby.Connections.startDiscovery(mGoogleApiClient, getPackageName(), DISCOVER_TIMEOUT, this)
@@ -185,6 +189,7 @@ public class NearbyConnectionsActivity extends AppCompatActivity implements Goog
     private void startAdvertising() {
         if (!isConnectedToNetwork()) {
             Toast.makeText(this, "NO INTERNET", Toast.LENGTH_LONG).show();
+            return;
         }
 
         // Advertising with an AppIdentifer lets other devices on the
@@ -196,9 +201,9 @@ public class NearbyConnectionsActivity extends AppCompatActivity implements Goog
 
         // The advertising timeout is set to run indefinitely
         // Positive values represent timeout in milliseconds
-        long NO_TIMEOUT = 0L;
+        long DISCOVER_TIMEOUT = 0L; // 0 = infinite
 
-        Nearby.Connections.startAdvertising(mGoogleApiClient, getPackageName(), appMetadata, NO_TIMEOUT, this).setResultCallback(new ResultCallback<Connections.StartAdvertisingResult>() {
+        Nearby.Connections.startAdvertising(mGoogleApiClient, null, appMetadata, DISCOVER_TIMEOUT, this).setResultCallback(new ResultCallback<Connections.StartAdvertisingResult>() {
             @Override
             public void onResult(@NonNull Connections.StartAdvertisingResult result) {
                 if (result.getStatus().isSuccess()) {
