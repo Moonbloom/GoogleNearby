@@ -10,6 +10,7 @@ public class Utils {
     private static final String TAG = "NERDBY - Utils";
 
     public static final String KHL = "KHL";
+    public static final String ESO = "ESO";
     public static final String MOTO = "MOTO";
 
     @SuppressLint("HardwareIds")
@@ -26,7 +27,7 @@ public class Utils {
                     publishName = MOTO;
                     break;
                 case "c65270bad031ed46":
-                    publishName = "ESO";
+                    publishName = ESO;
                     break;
                 default:
                     Log.d(TAG, "UNKNOWN ID: " + id);
