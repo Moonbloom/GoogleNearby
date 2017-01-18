@@ -1,5 +1,7 @@
 package nearby.google.trifork.googlenearby;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +14,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.messages.EddystoneUid;
+import com.google.android.gms.nearby.messages.Distance;
 import com.google.android.gms.nearby.messages.Message;
 import com.google.android.gms.nearby.messages.MessageFilter;
 import com.google.android.gms.nearby.messages.MessageListener;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         mMessageListener = new MessageListener() {
             @Override
             public void onFound(Message message) {
+
                 String messageAsString = new String(message.getContent());
                 Log.d(TAG, "Found message: " + messageAsString);
 
@@ -93,24 +96,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 activeMessages.remove(message);
                 nearbyAdapter.notifyDataSetChanged();
             }
+
+            @Override
+            public void onDistanceChanged(Message message, Distance distance) {
+                super.onDistanceChanged(message, distance);
+                Log.d("eso " + TAG, new String(message.getContent()) + " dist: " + distance.getAccuracy() + " " + distance.getMeters());
+            }
         };
     }
 
     @Override
     public void onStop() {
         unpublish();
-        unsubscribe();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
+//        unsubscribe();
+//        if (mGoogleApiClient.isConnected()) {
+//            mGoogleApiClient.disconnect();
+//        }
 
         super.onStop();
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        publish("KHL");
-        subscribe();
+        publish("MOTO");
+//        subscribe();
+        backgroundSubscribe();
     }
 
     @Override
@@ -145,5 +155,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private void unsubscribe() {
         Log.i(TAG, "Unsubscribing.");
         Nearby.Messages.unsubscribe(mGoogleApiClient, mMessageListener);
+    }
+
+    private void backgroundSubscribe() {
+        Log.i(TAG, "Subscribing for background updates.");
+        SubscribeOptions options = new SubscribeOptions.Builder()
+                .setStrategy(Strategy.BLE_ONLY)
+                .build();
+        Nearby.Messages.subscribe(mGoogleApiClient, getPendingIntent(), options);
+    }
+
+    private PendingIntent getPendingIntent() {
+        return PendingIntent.getBroadcast(this, 0, new Intent(this, BeaconMessageReceiver.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
