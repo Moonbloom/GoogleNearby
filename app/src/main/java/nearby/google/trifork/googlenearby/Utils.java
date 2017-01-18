@@ -16,7 +16,9 @@ public class Utils {
                 case "23d182f3423de3cf":
                     publishName = "KHL";
                     break;
-
+                case "c65270bad031ed46":
+                    publishName = "ESO";
+                    break;
                 default:
                     Log.d(TAG, "UNKNOWN ID: " + id);
                     publishName = "UNKNOWN";
