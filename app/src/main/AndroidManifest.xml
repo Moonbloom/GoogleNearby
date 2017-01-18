@@ -13,15 +13,22 @@
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="AIzaSyDyNLn9kIVfWehzA9j_217ZdkZBCBBDubU" />
+            android:value="AIzaSyDyNLn9kIVfWehzA9j_217ZdkZBCBBDubU"/>
 
-        <activity android:name=".MainActivity">
+        <meta-data
+            android:name="com.google.android.gms.nearby.connection.SERVICE_ID"
+            android:value="nearby.google.trifork.googlenearby"/>
+
+        <activity android:name=".HostActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".NearbyMessagesActivity"/>
+        <activity android:name=".NearbyConnectionsActivity"/>
 
     </application>
 

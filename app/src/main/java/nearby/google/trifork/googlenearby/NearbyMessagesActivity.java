@@ -1,10 +1,12 @@
 package nearby.google.trifork.googlenearby;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -23,9 +25,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class NearbyMessagesActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "NERDBY - Messages";
 
     private GoogleApiClient mGoogleApiClient;
     private Message mActiveMessage;
@@ -34,27 +36,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private List<Message> activeMessages = new ArrayList<>();
 
-    private NearbyAdapter nearbyAdapter;
+    private NearbyMessagesAdapter nearbyMessagesAdapter;
 
     @BindView(R.id.listview)
     ListView listView;
 
+    //region Android Lifecycle
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        nearbyAdapter = new NearbyAdapter(this, activeMessages);
-        listView.setAdapter(nearbyAdapter);
+        nearbyMessagesAdapter = new NearbyMessagesAdapter(this, activeMessages);
+        listView.setAdapter(nearbyMessagesAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this, new String(activeMessages.get(position).getContent()), Toast.LENGTH_LONG).show();
+                Toast.makeText(NearbyMessagesActivity.this, new String(activeMessages.get(position).getContent()), Toast.LENGTH_LONG).show();
             }
         });
 
         Strategy strategy = new Strategy.Builder()
+                .setTtlSeconds(10)
                 .build();
 
         options = new SubscribeOptions.Builder()
@@ -74,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.d(TAG, "Found message: " + messageAsString);
 
                 activeMessages.add(message);
-                nearbyAdapter.notifyDataSetChanged();
+                nearbyMessagesAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -83,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Log.d(TAG, "Lost sight of message: " + messageAsString);
 
                 activeMessages.remove(message);
-                nearbyAdapter.notifyDataSetChanged();
+                nearbyMessagesAdapter.notifyDataSetChanged();
             }
         };
     }
@@ -98,10 +103,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         super.onStop();
     }
+    //endregion
 
+    //region GoogleApiClient
+    @SuppressLint("HardwareIds")
     @Override
     public void onConnected(Bundle connectionHint) {
-        publish("KHL");
+        publish(Utils.getNameFromDeviceId(this));
         subscribe();
     }
 
@@ -114,7 +122,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed - " + connectionResult);
     }
+    //endregion
 
+    //region Private methods
     private void publish(String message) {
         Log.i(TAG, "Publishing message: " + message);
         mActiveMessage = new Message(message.getBytes());
@@ -138,4 +148,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.i(TAG, "Unsubscribing.");
         Nearby.Messages.unsubscribe(mGoogleApiClient, mMessageListener);
     }
+    //endregion
 }
