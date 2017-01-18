@@ -105,7 +105,7 @@ public class NearbyMessagesActivity extends AppCompatActivity implements GoogleA
             @Override
             public void onDistanceChanged(Message message, Distance distance) {
                 super.onDistanceChanged(message, distance);
-                Log.d("eso " + TAG, new String(message.getContent()) + " dist: " + distance.getAccuracy() + " " + distance.getMeters());
+                Log.d(TAG, new String(message.getContent()) + " dist: " + distance.getAccuracy() + " " + distance.getMeters());
             }
         };
     }
@@ -113,10 +113,10 @@ public class NearbyMessagesActivity extends AppCompatActivity implements GoogleA
     @Override
     public void onStop() {
         unpublish();
-//        unsubscribe();
-//        if (mGoogleApiClient.isConnected()) {
-//            mGoogleApiClient.disconnect();
-//        }
+        unsubscribe();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
 
         super.onStop();
     }
@@ -127,8 +127,8 @@ public class NearbyMessagesActivity extends AppCompatActivity implements GoogleA
     @Override
     public void onConnected(Bundle connectionHint) {
         publish(Utils.getNameFromDeviceId(this));
-//        subscribe();
-        backgroundSubscribe();
+        subscribe();
+//        backgroundSubscribe();
     }
 
     @Override
@@ -169,9 +169,6 @@ public class NearbyMessagesActivity extends AppCompatActivity implements GoogleA
 
     private void backgroundSubscribe() {
         Log.i(TAG, "Subscribing for background updates.");
-        SubscribeOptions options = new SubscribeOptions.Builder()
-                .setStrategy(Strategy.BLE_ONLY)
-                .build();
         Nearby.Messages.subscribe(mGoogleApiClient, getPendingIntent(), options);
     }
 
