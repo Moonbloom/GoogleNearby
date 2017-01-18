@@ -12,12 +12,12 @@ import com.google.android.gms.nearby.messages.Message;
 
 import java.util.List;
 
-public class NearbyAdapter extends BaseAdapter {
+public class NearbyMessagesAdapter extends BaseAdapter {
 
     private Context context;
     private List<Message> messages;
 
-    public NearbyAdapter(Context context, List<Message> messages) {
+    public NearbyMessagesAdapter(Context context, List<Message> messages) {
         this.context = context;
         this.messages = messages;
     }
@@ -40,7 +40,7 @@ public class NearbyAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_nearby, null, false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_nearby_message, null, false);
         }
 
         TextView textView = (TextView) convertView.findViewById(R.id.text);
