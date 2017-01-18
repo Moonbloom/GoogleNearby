@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.nearby.messages.EddystoneUid;
 import com.google.android.gms.nearby.messages.Message;
 
 import java.util.List;
@@ -43,7 +44,15 @@ public class NearbyMessagesAdapter extends BaseAdapter {
         }
 
         TextView textView = (TextView) convertView.findViewById(R.id.text);
-        textView.setText(new String(messages.get(position).getContent()));
+
+        Message message = messages.get(position);
+        if (Message.MESSAGE_NAMESPACE_RESERVED.equals(message.getNamespace())
+                && Message.MESSAGE_TYPE_EDDYSTONE_UID.equals(message.getType())) {
+            EddystoneUid eddystoneUid = EddystoneUid.from(message);
+            textView.setText(new String(eddystoneUid.toString()));
+        }else {
+            textView.setText(new String(message.getContent()));
+        }
 
         return convertView;
     }
