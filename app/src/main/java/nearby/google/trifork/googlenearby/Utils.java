@@ -26,9 +26,11 @@ public class Utils {
                 case "86adf4fd4948a0a3":
                     publishName = MOTO;
                     break;
+
                 case "c65270bad031ed46":
                     publishName = ESO;
                     break;
+
                 default:
                     Log.d(TAG, "UNKNOWN ID: " + id);
                     publishName = "UNKNOWN";
