@@ -86,7 +86,7 @@ public class NearbyConnectionsActivity extends AppCompatActivity implements Goog
     @SuppressLint("HardwareIds")
     @Override
     public void onConnected(Bundle connectionHint) {
-        if (Utils.getNameFromDeviceId(this).equals(Utils.KHL)) {
+        if (Utils.getNameFromDeviceId(this).equals(Utils.ESO)) {
             startDiscovery();
         } else {
             startAdvertising();
